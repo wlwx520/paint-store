@@ -1,0 +1,40 @@
+<root>
+	<!-- 启动端口 -->
+	<port>8080</port>
+	<!-- 扫描服务包路径 -->
+	<service-package>com.track.store.dog.service</service-package>
+	<!-- 扫描过滤器包路径 -->
+	<filter-package>com.track.store.dog.filter</filter-package>
+	<!-- 扫描持久化对象包路径 -->
+	<persistent-bean-package>com.track.store.dog.bean
+	</persistent-bean-package>
+	<!-- http通道数量 -->
+	<http-channel-size>64</http-channel-size>
+	<!-- 是否清理数据库文件 -->
+	<db-clear>false</db-clear>
+	<!-- log4j路径 -->
+	<log4j-path>log4j.properties</log4j-path>
+	<!-- 数据库文件路径 -->
+	<data-path>LocalDB</data-path>
+	<!-- 静态网页路径 -->
+	<web-path>web</web-path>
+	<!-- 资源上传路径 -->
+	<upload-path>upload</upload-path>
+	<beans>
+		<bean class="com.track.store.dog.manager.GoodsManager" />
+		<bean class="com.track.store.dog.manager.PartnerManager" />
+		<bean class="com.track.store.dog.manager.RecordManager" />
+
+		<bean class="com.track.store.dog.service.GoodsService">
+			<property key="goodsManager" ref="com.track.store.dog.manager.GoodsManager" />
+		</bean>
+		<bean class="com.track.store.dog.service.PartnerService">
+			<property key="partnerManager" ref="com.track.store.dog.manager.PartnerManager" />
+		</bean>
+		<bean class="com.track.store.dog.service.RecordService">
+			<property key="goodsManager" ref="com.track.store.dog.manager.GoodsManager" />
+			<property key="partnerManager" ref="com.track.store.dog.manager.PartnerManager" />
+			<property key="recordManager" ref="com.track.store.dog.manager.RecordManager" />
+		</bean>
+	</beans>
+</root>
