@@ -13,7 +13,7 @@ import com.track.paint.core.annotation.Handler;
 import com.track.paint.core.annotation.Service;
 import com.track.paint.core.exception.ErrorCodeExcption;
 import com.track.paint.core.http.ResultBuilder;
-import com.track.paint.core.interfaces1.IService;
+import com.track.paint.core.interfaces.IService;
 import com.track.store.dog.bean.Partner;
 import com.track.store.dog.manager.PartnerManager;
 import com.track.store.dog.util.AutoJsonHelper;
