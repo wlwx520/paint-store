@@ -144,7 +144,12 @@ public class RecordService implements IService {
 			rep.put("freightSum", -freightSum);
 			rep.put("coastSum", coastSum);
 
-			long total = recordManager.size((currrent - 1) * size, size);
+			long total = recordManager.size(
+					CheckUtil.checkStrIsEmpty(startTime) ? null : DATAFORMAT.parse(startTime).getTime(),
+					CheckUtil.checkStrIsEmpty(endTime) ? null : DATAFORMAT.parse(endTime).getTime(),
+					CheckUtil.checkStrIsEmpty(count) ? null : Double.valueOf(count),
+					CheckUtil.checkStrIsEmpty(univalent) ? null : Double.valueOf(univalent),
+					CheckUtil.checkStrIsEmpty(freight) ? null : Double.valueOf(freight), inOrOut, goods, partner);
 			rep.put("total", total);
 
 			return ResultBuilder.buildResult(0, rep);
