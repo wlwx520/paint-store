@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.track.paint.persistent.PersistentManager;
-import com.track.store.dog.bean.Goods;
-import com.track.store.dog.bean.Partner;
 import com.track.store.dog.bean.Record;
 
 public class RecordManager {
-	public void create(Long time, Long count, Double univalent, Double freight, String inOrOut, Goods goods,
-			Partner partner) {
+	public void create(Long time, Double count, Double univalent, Double freight, String inOrOut, String goods,
+			String partner) {
 		Record record = new Record();
-		record.setCount(Long.valueOf(count));
+		record.setCount(Double.valueOf(count));
 		record.setTime(Long.valueOf(time));
 		record.setInOrOut(inOrOut);
 		record.setUnivalent(Double.valueOf(univalent));
@@ -22,8 +20,8 @@ public class RecordManager {
 		PersistentManager.instance().save(record);
 	}
 
-	public List<Record> query(Long startTime, Long endTime, Long count, Double univalent, Double freight,
-			String inOrOut, Goods goods, Partner partner) {
+	public List<Record> query(Long startTime, Long endTime, Double count, Double univalent, Double freight,
+			String inOrOut, String goods, String partner, int offset, int limit) {
 		Record template = new Record();
 		List<String> condition = new ArrayList<>();
 
@@ -57,13 +55,19 @@ public class RecordManager {
 			condition.add("partner");
 		}
 
+		// limit 10 offset 0
+
 		StringBuilder extCondition = new StringBuilder();
 		if (startTime != null && endTime != null) {
 			extCondition.append(" time >= " + startTime + " and time <= " + endTime);
 		}
 
-		return PersistentManager.instance().queryExt(template, extCondition.toString(),
-				condition.isEmpty() ? null : (String[]) condition.toArray());
+		return PersistentManager.instance().queryExtPage(template, extCondition.toString(),
+				condition.isEmpty() ? null : condition, offset, limit);
+	}
+
+	public long size(int offset, int limit) {
+		return PersistentManager.instance().queryCountPage(new Record(), null, offset, limit);
 	}
 
 	public boolean delete(Record record) {

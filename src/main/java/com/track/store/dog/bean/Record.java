@@ -3,20 +3,17 @@ package com.track.store.dog.bean;
 import com.track.paint.persistent.PersistentBean;
 import com.track.paint.persistent.annotation.Column;
 import com.track.paint.persistent.annotation.Persistent;
-import com.track.store.dog.util.AutoJsonHelper.AutoJsonObject;
 
 @Persistent(table = "record")
 public class Record extends PersistentBean {
 	@Column
 	private long time;
 	@Column
-	@AutoJsonObject
-	private Goods goods;
+	private String goods;
 	@Column
-	@AutoJsonObject
-	private Partner partner;
+	private String partner;
 	@Column
-	private long count;
+	private double count;
 	@Column
 	private double univalent;
 	@Column
@@ -35,27 +32,27 @@ public class Record extends PersistentBean {
 		this.time = time;
 	}
 
-	public Goods getGoods() {
+	public String getGoods() {
 		return goods;
 	}
 
-	public void setGoods(Goods goods) {
+	public void setGoods(String goods) {
 		this.goods = goods;
 	}
 
-	public Partner getPartner() {
+	public String getPartner() {
 		return partner;
 	}
 
-	public void setPartner(Partner partner) {
+	public void setPartner(String partner) {
 		this.partner = partner;
 	}
 
-	public long getCount() {
+	public double getCount() {
 		return count;
 	}
 
-	public void setCount(long count) {
+	public void setCount(double count) {
 		this.count = count;
 	}
 

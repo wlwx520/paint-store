@@ -1,5 +1,7 @@
 package com.track.store.dog.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -14,21 +16,18 @@ import com.track.paint.core.annotation.Service;
 import com.track.paint.core.exception.ErrorCodeExcption;
 import com.track.paint.core.http.ResultBuilder;
 import com.track.paint.core.interfaces.IService;
-import com.track.store.dog.bean.Goods;
-import com.track.store.dog.bean.Partner;
+import com.track.paint.persistent.PersistentBean;
+import com.track.paint.persistent.PersistentManager;
 import com.track.store.dog.bean.Record;
-import com.track.store.dog.manager.GoodsManager;
-import com.track.store.dog.manager.PartnerManager;
 import com.track.store.dog.manager.RecordManager;
 import com.track.store.dog.util.AutoJsonHelper;
+import com.track.store.dog.util.CheckUtil;
 
 @Service("/record")
 public class RecordService implements IService {
 
-	@AutoLifeCycle
-	private GoodsManager goodsManager;
-	@AutoLifeCycle
-	private PartnerManager partnerManager;
+	private static SimpleDateFormat DATAFORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 	@AutoLifeCycle
 	private RecordManager recordManager;
 
@@ -39,6 +38,7 @@ public class RecordService implements IService {
 			ResultBuilder.addErrorCode(0x4002, "货物名错误");
 			ResultBuilder.addErrorCode(0x4003, "合作人错误");
 			ResultBuilder.addErrorCode(0x4004, "出入账类型错误");
+			ResultBuilder.addErrorCode(0x4005, "记录删除错误");
 		} catch (ErrorCodeExcption e) {
 			e.printStackTrace();
 		}
@@ -55,23 +55,14 @@ public class RecordService implements IService {
 		String goods = data.get("goods");
 		String partner = data.get("partner");
 
-		if (inOrOut == null || !(inOrOut.equals("in") || inOrOut.equals("out"))) {
+		if (inOrOut == null || !(inOrOut.equals("进货") || inOrOut.equals("出货"))) {
 			return ResultBuilder.buildResult(0x4004);
 		}
 
-		List<Goods> queryGoods = goodsManager.queryByName(goods);
-		if (queryGoods == null || queryGoods.size() != 1) {
-			return ResultBuilder.buildResult(0x4002);
-		}
-
-		List<Partner> queryPartner = partnerManager.queryByName(partner);
-		if (queryPartner == null || queryPartner.size() != 1) {
-			return ResultBuilder.buildResult(0x4003);
-		}
-
 		try {
-			recordManager.create(Long.valueOf(time), Long.valueOf(count), Double.valueOf(univalent),
-					Double.valueOf(freight), inOrOut, queryGoods.get(0), queryPartner.get(0));
+			Date parseTime = DATAFORMAT.parse(time);
+			recordManager.create(parseTime.getTime(), Double.valueOf(count), Double.valueOf(univalent),
+					Double.valueOf(freight), inOrOut, goods, partner);
 		} catch (Exception e) {
 			return ResultBuilder.buildResult(0x4001);
 		}
@@ -90,34 +81,82 @@ public class RecordService implements IService {
 		String inOrOut = data.get("inOrOut");
 		String goods = data.get("goods");
 		String partner = data.get("partner");
+		int currrent = Integer.valueOf(data.get("current"));
+		int size = Integer.valueOf(data.get("size"));
 
-		Goods tempGoods = null;
-		Partner tempPartner = null;
-		List<Goods> queryGoods = goodsManager.queryByName(goods);
-		if (queryGoods != null && queryGoods.size() == 1) {
-			tempGoods = queryGoods.get(0);
+		if (univalent != null) {
+			univalent = null;
+		}
+		if (count != null) {
+			count = null;
+		}
+		if (freight != null) {
+			freight = null;
 		}
 
-		List<Partner> queryPartner = partnerManager.queryByName(partner);
-		if (queryPartner != null && queryPartner.size() == 1) {
-			tempPartner = queryPartner.get(0);
+		if (goods != null && goods.equals("任意")) {
+			goods = null;
+		}
+		if (partner != null && partner.equals("任意")) {
+			partner = null;
+		}
+		if (inOrOut != null && inOrOut.equals("任意")) {
+			inOrOut = null;
 		}
 
-		List<Record> result = recordManager.query(startTime == null ? null : Long.valueOf(startTime),
-				endTime == null ? null : Long.valueOf(endTime), count == null ? null : Long.valueOf(count),
-				univalent == null ? null : Double.valueOf(univalent), freight == null ? null : Double.valueOf(freight),
-				inOrOut, tempGoods, tempPartner);
+		try {
+			List<Record> result = recordManager.query(
+					CheckUtil.checkStrIsEmpty(startTime) ? null : DATAFORMAT.parse(startTime).getTime(),
+					CheckUtil.checkStrIsEmpty(endTime) ? null : DATAFORMAT.parse(endTime).getTime(),
+					CheckUtil.checkStrIsEmpty(count) ? null : Double.valueOf(count),
+					CheckUtil.checkStrIsEmpty(univalent) ? null : Double.valueOf(univalent),
+					CheckUtil.checkStrIsEmpty(freight) ? null : Double.valueOf(freight), inOrOut, goods, partner,
+					(currrent - 1) * size, size);
 
-		JSONObject rep = new JSONObject();
+			JSONObject rep = new JSONObject();
+			JSONArray arr = new JSONArray();
+			double freightSum = 0;
+			double coastSum = 0;
 
-		JSONArray arr = new JSONArray();
-		result.forEach(item -> {
-			arr.add(AutoJsonHelper.instance().objToJson(item));
-		});
+			if (result != null) {
+				result.stream().sorted((a, b) -> {
+					return (int) (a.getTime() - b.getTime());
+				}).forEach(item -> {
+					JSONObject json = AutoJsonHelper.instance().objToJson(item);
+					json.put("time", DATAFORMAT.format(json.getLong("time")));
+					arr.add(json);
+				});
 
-		rep.put("records", arr);
+				for (Record r : result) {
+					freightSum += r.getFreight();
+					coastSum += r.getUnivalent() * r.getCount();
+				}
+			}
 
-		return ResultBuilder.buildResult(0, rep);
+			rep.put("records", arr);
+			rep.put("freightSum", freightSum);
+			rep.put("coastSum", coastSum);
+
+			long total = recordManager.size((currrent - 1) * size, size);
+			rep.put("total", total);
+
+			return ResultBuilder.buildResult(0, rep);
+		} catch (Exception e) {
+			return ResultBuilder.buildResult(0x4001);
+		}
+	}
+
+	@Handler(value = "/delete", method = HttpMethod.POST)
+	public Result deleteRecord(Invocation invocation) {
+		Map<String, String> data = invocation.getAttachment(Invocation.REQUEST);
+		String id = data.get(PersistentBean.ID);
+		Record template = new Record();
+		template.cat_static_table_primary_key = Integer.valueOf(id);
+		if (PersistentManager.instance().delete(template)) {
+			return ResultBuilder.buildResult(0);
+		} else {
+			return ResultBuilder.buildResult(0x4005);
+		}
 	}
 
 }
