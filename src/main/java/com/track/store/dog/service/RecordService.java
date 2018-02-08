@@ -111,6 +111,14 @@ public class RecordService implements IService {
 					CheckUtil.checkStrIsEmpty(univalent) ? null : Double.valueOf(univalent),
 					CheckUtil.checkStrIsEmpty(freight) ? null : Double.valueOf(freight), inOrOut, goods, partner,
 					(currrent - 1) * size, size);
+			
+			List<Record> result2 = recordManager.query(
+					CheckUtil.checkStrIsEmpty(startTime) ? null : DATAFORMAT.parse(startTime).getTime(),
+					CheckUtil.checkStrIsEmpty(endTime) ? null : DATAFORMAT.parse(endTime).getTime(),
+					CheckUtil.checkStrIsEmpty(count) ? null : Double.valueOf(count),
+					CheckUtil.checkStrIsEmpty(univalent) ? null : Double.valueOf(univalent),
+					CheckUtil.checkStrIsEmpty(freight) ? null : Double.valueOf(freight), inOrOut, goods, partner,
+					0, Integer.MAX_VALUE);
 
 			JSONObject rep = new JSONObject();
 			JSONArray arr = new JSONArray();
@@ -127,7 +135,7 @@ public class RecordService implements IService {
 					arr.add(json);
 				});
 
-				for (Record r : result) {
+				for (Record r : result2) {
 					freightSum += r.getFreight();
 					double x = r.getUnivalent() * r.getCount();
 					if (r.getInOrOut().equals("出货") && x < 0) {

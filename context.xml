@@ -10,7 +10,7 @@
 	<!-- http通道数量 -->
 	<http-channel-size>64</http-channel-size>
 	<!-- 是否清理数据库文件 -->
-	<db-clear>false</db-clear>
+	<db-clear>true</db-clear>
 	<!-- log4j路径 -->
 	<log4j-path>log4j.properties</log4j-path>
 	<!-- 数据库文件路径 -->
