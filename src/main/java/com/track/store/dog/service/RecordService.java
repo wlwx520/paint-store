@@ -16,7 +16,6 @@ import com.track.paint.core.annotation.Service;
 import com.track.paint.core.exception.ErrorCodeExcption;
 import com.track.paint.core.http.ResultBuilder;
 import com.track.paint.core.interfaces.IService;
-import com.track.paint.persistent.PersistentBean;
 import com.track.paint.persistent.PersistentManager;
 import com.track.store.dog.bean.Record;
 import com.track.store.dog.manager.RecordManager;
@@ -73,8 +72,8 @@ public class RecordService implements IService {
 	@Handler(value = "/query", method = HttpMethod.POST)
 	public Result queryRecord(Invocation invocation) {
 		Map<String, String> data = invocation.getAttachment(Invocation.REQUEST);
-		String startTime = data.get("start-time");
-		String endTime = data.get("end-time");
+		String startTime = data.get("startTime");
+		String endTime = data.get("endTime");
 		String count = data.get("count");
 		String univalent = data.get("univalent");
 		String freight = data.get("freight");
@@ -124,6 +123,7 @@ public class RecordService implements IService {
 				}).forEach(item -> {
 					JSONObject json = AutoJsonHelper.instance().objToJson(item);
 					json.put("time", DATAFORMAT.format(json.getLong("time")));
+					json.put("id", item.cat_static_table_primary_key);
 					arr.add(json);
 				});
 
@@ -149,7 +149,7 @@ public class RecordService implements IService {
 	@Handler(value = "/delete", method = HttpMethod.POST)
 	public Result deleteRecord(Invocation invocation) {
 		Map<String, String> data = invocation.getAttachment(Invocation.REQUEST);
-		String id = data.get(PersistentBean.ID);
+		String id = data.get("id");
 		Record template = new Record();
 		template.cat_static_table_primary_key = Integer.valueOf(id);
 		if (PersistentManager.instance().delete(template)) {
