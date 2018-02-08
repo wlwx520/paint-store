@@ -129,12 +129,19 @@ public class RecordService implements IService {
 
 				for (Record r : result) {
 					freightSum += r.getFreight();
-					coastSum += r.getUnivalent() * r.getCount();
+					double x = r.getUnivalent() * r.getCount();
+					if (r.getInOrOut().equals("出货") && x < 0) {
+						x = -x;
+					}
+					if (r.getInOrOut().equals("进货") && x > 0) {
+						x = -x;
+					}
+					coastSum += x;
 				}
 			}
 
 			rep.put("records", arr);
-			rep.put("freightSum", freightSum);
+			rep.put("freightSum", -freightSum);
 			rep.put("coastSum", coastSum);
 
 			long total = recordManager.size((currrent - 1) * size, size);
