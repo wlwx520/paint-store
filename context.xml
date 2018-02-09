@@ -22,15 +22,20 @@
 	<beans>
 		<bean class="com.track.store.dog.manager.RecordManager" />
 		<bean class="com.track.store.dog.manager.ConfigureManager" />
+		<bean class="com.track.store.dog.manager.BalanceManager" />
 	
 		<bean class="com.track.store.dog.service.RecordService">
 			<property key="recordManager" ref="com.track.store.dog.manager.RecordManager" />
+			<property key="balanceManager" ref="com.track.store.dog.manager.BalanceManager" />
 		</bean>
-	
-		<bean class="com.track.store.dog.manager.ConfigureManager" />
-	
+		
 		<bean class="com.track.store.dog.service.ConfigureService">
 			<property key="configureManager" ref="com.track.store.dog.manager.ConfigureManager" />
+			<property key="balanceManager" ref="com.track.store.dog.manager.BalanceManager" />
+		</bean>
+		
+		<bean class="com.track.store.dog.service.BalanceService">
+			<property key="balanceManager" ref="com.track.store.dog.manager.BalanceManager" />
 		</bean>
 	</beans>
 </root>

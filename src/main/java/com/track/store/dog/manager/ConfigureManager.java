@@ -10,7 +10,7 @@ public class ConfigureManager {
 	}
 
 	public Configure get() {
-		List<Configure> query = PersistentManager.instance().query(new Configure());
+		List<Configure> query = PersistentManager.instance().query(new Configure(),null);
 		if (query == null || query.isEmpty()) {
 			Configure configure = new Configure();
 			configure.setGoods("[]");

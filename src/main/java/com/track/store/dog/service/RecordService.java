@@ -1,6 +1,7 @@
 package com.track.store.dog.service;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,10 @@ import com.track.paint.core.annotation.Service;
 import com.track.paint.core.exception.ErrorCodeExcption;
 import com.track.paint.core.http.ResultBuilder;
 import com.track.paint.core.interfaces.IService;
+import com.track.paint.persistent.PersistentBean;
 import com.track.paint.persistent.PersistentManager;
 import com.track.store.dog.bean.Record;
+import com.track.store.dog.manager.BalanceManager;
 import com.track.store.dog.manager.RecordManager;
 import com.track.store.dog.util.AutoJsonHelper;
 import com.track.store.dog.util.CheckUtil;
@@ -29,6 +32,9 @@ public class RecordService implements IService {
 
 	@AutoLifeCycle
 	private RecordManager recordManager;
+
+	@AutoLifeCycle
+	private BalanceManager balanceManager;
 
 	@Override
 	public void init() {
@@ -58,14 +64,29 @@ public class RecordService implements IService {
 			return ResultBuilder.buildResult(0x4004);
 		}
 
+		Double univalentValue = Double.valueOf(univalent);
+		Double freightValue = Double.valueOf(freight);
+		Double countValue = Double.valueOf(count);
 		try {
 			Date parseTime = DATAFORMAT.parse(time);
-			recordManager.create(parseTime.getTime(), Double.valueOf(count), Double.valueOf(univalent),
-					Double.valueOf(freight), inOrOut, goods, partner);
+			recordManager.create(parseTime.getTime(), countValue, univalentValue, freightValue, inOrOut, goods,
+					partner);
 		} catch (Exception e) {
 			return ResultBuilder.buildResult(0x4001);
 		}
 
+		if (freightValue > 0) {
+			freightValue = -freightValue;
+		}
+		double x = univalentValue * countValue;
+		if (inOrOut.equals("出货") && x < 0) {
+			x = -x;
+		}
+		if (inOrOut.equals("进货") && x > 0) {
+			x = -x;
+		}
+
+		balanceManager.update(goods, partner, x + freightValue);
 		return ResultBuilder.buildResult(0);
 	}
 
@@ -111,14 +132,14 @@ public class RecordService implements IService {
 					CheckUtil.checkStrIsEmpty(univalent) ? null : Double.valueOf(univalent),
 					CheckUtil.checkStrIsEmpty(freight) ? null : Double.valueOf(freight), inOrOut, goods, partner,
 					(currrent - 1) * size, size);
-			
+
 			List<Record> result2 = recordManager.query(
 					CheckUtil.checkStrIsEmpty(startTime) ? null : DATAFORMAT.parse(startTime).getTime(),
 					CheckUtil.checkStrIsEmpty(endTime) ? null : DATAFORMAT.parse(endTime).getTime(),
 					CheckUtil.checkStrIsEmpty(count) ? null : Double.valueOf(count),
 					CheckUtil.checkStrIsEmpty(univalent) ? null : Double.valueOf(univalent),
-					CheckUtil.checkStrIsEmpty(freight) ? null : Double.valueOf(freight), inOrOut, goods, partner,
-					0, Integer.MAX_VALUE);
+					CheckUtil.checkStrIsEmpty(freight) ? null : Double.valueOf(freight), inOrOut, goods, partner, 0,
+					Integer.MAX_VALUE);
 
 			JSONObject rep = new JSONObject();
 			JSONArray arr = new JSONArray();
@@ -136,7 +157,11 @@ public class RecordService implements IService {
 				});
 
 				for (Record r : result2) {
-					freightSum += r.getFreight();
+					double y = r.getFreight();
+					if (y > 0) {
+						y = -y;
+					}
+					freightSum += y;
 					double x = r.getUnivalent() * r.getCount();
 					if (r.getInOrOut().equals("出货") && x < 0) {
 						x = -x;
@@ -149,7 +174,7 @@ public class RecordService implements IService {
 			}
 
 			rep.put("records", arr);
-			rep.put("freightSum", -freightSum);
+			rep.put("freightSum", freightSum);
 			rep.put("coastSum", coastSum);
 
 			long total = recordManager.size(
@@ -172,6 +197,25 @@ public class RecordService implements IService {
 		String id = data.get("id");
 		Record template = new Record();
 		template.cat_static_table_primary_key = Integer.valueOf(id);
+
+		List<Record> query = PersistentManager.instance().query(template,
+				Arrays.asList(new String[] { PersistentBean.ID }));
+		assert (CheckUtil.checkListOne(query));
+		Record delete = query.get(0);
+		double y = delete.getFreight();
+		if (y > 0) {
+			y = -y;
+		}
+		double x = delete.getUnivalent() * delete.getCount();
+		if (delete.getInOrOut().equals("出货") && x < 0) {
+			x = -x;
+		}
+		if (delete.getInOrOut().equals("进货") && x > 0) {
+			x = -x;
+		}
+
+		balanceManager.update(delete.getGoods(), delete.getPartner(), -x - y);
+
 		if (PersistentManager.instance().delete(template)) {
 			return ResultBuilder.buildResult(0);
 		} else {
