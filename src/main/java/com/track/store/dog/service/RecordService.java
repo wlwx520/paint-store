@@ -32,6 +32,7 @@ import com.track.store.dog.util.ExcelExportUtil;
 public class RecordService implements IService {
 
 	private static SimpleDateFormat DATAFORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static SimpleDateFormat DATAFORMAT2 = new SimpleDateFormat("yyyy年MM月dd日HH时mm分ss秒");
 
 	@AutoLifeCycle
 	private RecordManager recordManager;
@@ -275,9 +276,40 @@ public class RecordService implements IService {
 				result.forEach(record -> {
 					xlsx.writeRecord(record);
 				});
-				String filePath = xlsx.toFile();
 
-				return ResultBuilder.buildResult(0, filePath);
+				StringBuilder name = new StringBuilder();
+				if (partner == null) {
+					name.append("全部伙伴");
+				} else {
+					name.append(partner);
+				}
+				name.append("-");
+
+				if (goods == null) {
+					name.append("全部货物");
+				} else {
+					name.append(goods);
+				}
+				name.append("-");
+
+				if (inOrOut == null) {
+					name.append("进出货");
+				} else {
+					name.append(inOrOut);
+				}
+				name.append("-");
+
+				if (CheckUtil.checkStrIsEmpty(startTime)) {
+					name.append("全部时间");
+				} else {
+					name.append(DATAFORMAT2.format(DATAFORMAT.parse(startTime).getTime()));
+					name.append("至");
+					name.append(DATAFORMAT2.format(DATAFORMAT.parse(endTime).getTime()));
+				}
+				name.append("-交易记录");
+				String filePath = xlsx.toFile(name.toString());
+
+				return ResultBuilder.buildResult(0, filePath,name.toString());
 			}
 
 		} catch (NumberFormatException | ParseException e) {
