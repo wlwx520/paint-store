@@ -80,4 +80,10 @@ public class Record extends PersistentBean {
 		this.freight = freight;
 	}
 
+	@Override
+	public String toString() {
+		return "Record [time=" + time + ", goods=" + goods + ", partner=" + partner + ", count=" + count
+				+ ", univalent=" + univalent + ", inOrOut=" + inOrOut + ", freight=" + freight + "]";
+	}
+
 }

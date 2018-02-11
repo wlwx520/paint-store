@@ -47,6 +47,7 @@ public class RecordService implements IService {
 			ResultBuilder.addErrorCode(0x4003, "合作人错误");
 			ResultBuilder.addErrorCode(0x4004, "出入账类型错误");
 			ResultBuilder.addErrorCode(0x4005, "记录删除错误");
+			ResultBuilder.addErrorCode(0x4006, "导出无记录");
 		} catch (ErrorCodeExcption e) {
 			e.printStackTrace();
 		}
@@ -226,7 +227,7 @@ public class RecordService implements IService {
 		}
 	}
 
-	// @Handler(value = "/export", method = HttpMethod.DOWNLOAD)
+	@Handler(value = "/export", method = HttpMethod.DOWNLOAD)
 	public Result exportRecord(Invocation invocation) {
 		Map<String, String> data = invocation.getAttachment(Invocation.REQUEST);
 		String startTime = data.get("startTime");
@@ -267,13 +268,18 @@ public class RecordService implements IService {
 					CheckUtil.checkStrIsEmpty(freight) ? null : Double.valueOf(freight), inOrOut, goods, partner, 0,
 					Integer.MAX_VALUE);
 
-			ExcelExportUtil xlsx = ExcelExportUtil.createXlsx();
-			result.forEach(record -> {
-				xlsx.writeRecord(record);
-			});
-			byte[] bytes = xlsx.toBytes();
+			if (CheckUtil.checkListZero(result)) {
+				return ResultBuilder.buildResult(0x4006);
+			} else {
+				ExcelExportUtil xlsx = ExcelExportUtil.createXlsx();
+				result.forEach(record -> {
+					xlsx.writeRecord(record);
+				});
+				String filePath = xlsx.toFile();
 
-			return ResultBuilder.buildResult(0, bytes);
+				return ResultBuilder.buildResult(0, filePath);
+			}
+
 		} catch (NumberFormatException | ParseException e) {
 			throw new SystemException(e);
 		}
