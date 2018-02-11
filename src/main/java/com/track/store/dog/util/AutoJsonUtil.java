@@ -17,13 +17,13 @@ import java.util.List;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-public class AutoJsonHelper {
-	private AutoJsonHelper() {
+public class AutoJsonUtil {
+	private AutoJsonUtil() {
 	}
 
-	private static AutoJsonHelper instance = new AutoJsonHelper();
+	private static AutoJsonUtil instance = new AutoJsonUtil();
 
-	public static AutoJsonHelper instance() {
+	public static AutoJsonUtil instance() {
 		return instance;
 	}
 

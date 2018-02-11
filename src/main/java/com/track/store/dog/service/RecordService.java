@@ -1,5 +1,6 @@
 package com.track.store.dog.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -15,6 +16,7 @@ import com.track.paint.core.annotation.AutoLifeCycle;
 import com.track.paint.core.annotation.Handler;
 import com.track.paint.core.annotation.Service;
 import com.track.paint.core.exception.ErrorCodeExcption;
+import com.track.paint.core.exception.SystemException;
 import com.track.paint.core.http.ResultBuilder;
 import com.track.paint.core.interfaces.IService;
 import com.track.paint.persistent.PersistentBean;
@@ -22,8 +24,9 @@ import com.track.paint.persistent.PersistentManager;
 import com.track.store.dog.bean.Record;
 import com.track.store.dog.manager.BalanceManager;
 import com.track.store.dog.manager.RecordManager;
-import com.track.store.dog.util.AutoJsonHelper;
+import com.track.store.dog.util.AutoJsonUtil;
 import com.track.store.dog.util.CheckUtil;
+import com.track.store.dog.util.ExcelExportUtil;
 
 @Service("/record")
 public class RecordService implements IService {
@@ -150,7 +153,7 @@ public class RecordService implements IService {
 				result.stream().sorted((a, b) -> {
 					return (int) (a.getTime() - b.getTime());
 				}).forEach(item -> {
-					JSONObject json = AutoJsonHelper.instance().objToJson(item);
+					JSONObject json = AutoJsonUtil.instance().objToJson(item);
 					json.put("time", DATAFORMAT.format(json.getLong("time")));
 					json.put("id", item.cat_static_table_primary_key);
 					arr.add(json);
@@ -220,6 +223,59 @@ public class RecordService implements IService {
 			return ResultBuilder.buildResult(0);
 		} else {
 			return ResultBuilder.buildResult(0x4005);
+		}
+	}
+
+//	@Handler(value = "/export", method = HttpMethod.DOWNLOAD)
+	public Result exportRecord(Invocation invocation) {
+		Map<String, String> data = invocation.getAttachment(Invocation.REQUEST);
+		String startTime = data.get("startTime");
+		String endTime = data.get("endTime");
+		String count = data.get("count");
+		String univalent = data.get("univalent");
+		String freight = data.get("freight");
+		String inOrOut = data.get("inOrOut");
+		String goods = data.get("goods");
+		String partner = data.get("partner");
+
+		if (univalent != null) {
+			univalent = null;
+		}
+		if (count != null) {
+			count = null;
+		}
+		if (freight != null) {
+			freight = null;
+		}
+
+		if (goods != null && goods.equals("任意")) {
+			goods = null;
+		}
+		if (partner != null && partner.equals("任意")) {
+			partner = null;
+		}
+		if (inOrOut != null && inOrOut.equals("任意")) {
+			inOrOut = null;
+		}
+
+		try {
+			List<Record> result = recordManager.query(
+					CheckUtil.checkStrIsEmpty(startTime) ? null : DATAFORMAT.parse(startTime).getTime(),
+					CheckUtil.checkStrIsEmpty(endTime) ? null : DATAFORMAT.parse(endTime).getTime(),
+					CheckUtil.checkStrIsEmpty(count) ? null : Double.valueOf(count),
+					CheckUtil.checkStrIsEmpty(univalent) ? null : Double.valueOf(univalent),
+					CheckUtil.checkStrIsEmpty(freight) ? null : Double.valueOf(freight), inOrOut, goods, partner, 0,
+					Integer.MAX_VALUE);
+
+			ExcelExportUtil xlsx = ExcelExportUtil.createXlsx();
+			result.forEach(record -> {
+				xlsx.writeRecord(record);
+			});
+			byte[] bytes = xlsx.toBytes();
+
+			return ResultBuilder.buildResult(0, bytes);
+		} catch (NumberFormatException | ParseException e) {
+			throw new SystemException(e);
 		}
 	}
 
