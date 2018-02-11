@@ -15,10 +15,11 @@ public class BalanceManager {
 		template.setPartner(partner);
 		List<Balance> query = PersistentManager.instance().query(template,
 				Arrays.asList(new String[] { "goods", "partner" }));
-		assert (CheckUtil.checkListOne(query));
-		Balance balance = query.get(0);
-		balance.setBalance(balance.getBalance() + update);
-		PersistentManager.instance().save(balance);
+		if (CheckUtil.checkListOne(query)) {
+			Balance balance = query.get(0);
+			balance.setBalance(balance.getBalance() + update);
+			PersistentManager.instance().save(balance);
+		}
 	}
 
 	public void createBalance(String goods, String partner) {
