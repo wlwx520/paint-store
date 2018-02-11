@@ -13,9 +13,9 @@ import com.track.paint.core.annotation.Handler;
 import com.track.paint.core.annotation.Service;
 import com.track.paint.core.http.ResultBuilder;
 import com.track.paint.core.interfaces.IService;
+import com.track.paint.util.AutoJsonUtil;
 import com.track.store.dog.bean.Balance;
 import com.track.store.dog.manager.BalanceManager;
-import com.track.store.dog.util.AutoJsonUtil;
 
 @Service("/balance")
 public class BalanceService implements IService {
