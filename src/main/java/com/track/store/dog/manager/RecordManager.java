@@ -8,7 +8,7 @@ import com.track.store.dog.bean.Record;
 
 public class RecordManager {
 	public void create(Long time, Double count, Double univalent, Double freight, String inOrOut, String goods,
-			String partner) {
+			String partner,Double other,String otherInfo) {
 		Record record = new Record();
 		record.setCount(Double.valueOf(count));
 		record.setTime(Long.valueOf(time));
@@ -17,6 +17,8 @@ public class RecordManager {
 		record.setFreight(Double.valueOf(freight));
 		record.setGoods(goods);
 		record.setPartner(partner);
+		record.setOther(other);
+		record.setOtherInfo(otherInfo);
 		PersistentManager.instance().save(record);
 	}
 

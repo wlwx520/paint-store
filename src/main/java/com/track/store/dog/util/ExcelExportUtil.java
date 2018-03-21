@@ -44,10 +44,12 @@ public class ExcelExportUtil {
 				double x = 0;
 				double y = 0;
 				double z = 0;
+				double p = 0;
 				for (int j = 3; j <= lastRow; j++) {
 					x += sheet.getRow(j).getCell(6).getNumericCellValue();
 					y += sheet.getRow(j).getCell(7).getNumericCellValue();
-					z += sheet.getRow(j).getCell(8).getNumericCellValue();
+					p += sheet.getRow(j).getCell(8).getNumericCellValue();
+					z += sheet.getRow(j).getCell(9).getNumericCellValue();
 				}
 
 				XSSFRow row0 = sheet.getRow(0);
@@ -55,8 +57,10 @@ public class ExcelExportUtil {
 				row0.createCell(1).setCellValue(x);
 				row0.createCell(3).setCellValue("运费总计");
 				row0.createCell(4).setCellValue(y);
-				row0.createCell(6).setCellValue("总款总计");
-				row0.createCell(7).setCellValue(z);
+				row0.createCell(6).setCellValue("其他费用总计");
+				row0.createCell(7).setCellValue(p);
+				row0.createCell(9).setCellValue("总款总计");
+				row0.createCell(10).setCellValue(z);
 			}
 			File file = new File(Definiens.UPLOAD_PATH + File.separator + name + ".xlsx");
 			FileOutputStream out = new FileOutputStream(file);
@@ -72,7 +76,14 @@ public class ExcelExportUtil {
 		int last = sheet.getLastRowNum();
 		XSSFRow row = sheet.createRow(last + 1);
 		double x = record.getInOrOut().equals("出货") ? record.getUnivalent() : -record.getUnivalent();
-		double y = -record.getFreight();
+		double y = record.getFreight();
+		double z = record.getOther();
+		if (y > 0) {
+			y = -y;
+		}
+		if (z > 0) {
+			z = -z;
+		}
 		row.createCell(0).setCellValue(DATAFORMAT.format(record.getTime()));
 		row.createCell(1).setCellValue(record.getGoods());
 		row.createCell(2).setCellValue(record.getPartner());
@@ -81,7 +92,9 @@ public class ExcelExportUtil {
 		row.createCell(5).setCellValue(record.getCount());
 		row.createCell(6).setCellValue(x * record.getCount());
 		row.createCell(7).setCellValue(y);
-		row.createCell(8).setCellValue(x * record.getCount() + y);
+		row.createCell(8).setCellValue(z);
+		row.createCell(9).setCellValue(x * record.getCount() + y + z);
+		row.createCell(10).setCellValue(record.getOtherInfo());
 	}
 
 	private void createHeadInSheet(XSSFSheet sheet) {
@@ -96,7 +109,9 @@ public class ExcelExportUtil {
 		headRow.createCell(5).setCellValue("数量");
 		headRow.createCell(6).setCellValue("货款");
 		headRow.createCell(7).setCellValue("运费");
-		headRow.createCell(8).setCellValue("总款");
+		headRow.createCell(8).setCellValue("其他费用");
+		headRow.createCell(9).setCellValue("总款");
+		headRow.createCell(10).setCellValue("备注");
 	}
 
 }

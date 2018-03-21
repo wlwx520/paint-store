@@ -1,0 +1,8 @@
+2018-19-21 14:19:23 : {partner=[{"name":"A"}], goods=[]}
+2018-19-21 14:19:55 : {partner=[{"name":"A"}], goods=[{"name":"B"}]}
+2018-20-21 14:20:42 : {partner=[{"name":"A"}], goods=[]}
+2018-21-21 14:21:11 : {partner=[{"name":"A"}], goods=[{"name":"B"}]}
+2018-40-21 14:40:06 : {partner=[{"name":"A"}], goods=[]}
+2018-40-21 14:40:09 : {partner=[{"name":"A"}], goods=[{"name":"B"}]}
+2018-43-21 14:43:21 : {partner=[{"name":"A"}], goods=[]}
+2018-43-21 14:43:23 : {partner=[{"name":"A"}], goods=[{"name":"B"}]}

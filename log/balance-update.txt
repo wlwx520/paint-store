@@ -1,0 +1,2 @@
+2018-20-21 14:20:29 : {partner=A, goods=B, update=120}
+2018-21-21 14:21:41 : {partner=A, goods=B, update=12}

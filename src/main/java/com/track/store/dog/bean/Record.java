@@ -20,6 +20,10 @@ public class Record extends PersistentBean {
 	private String inOrOut;
 	@Column
 	private double freight;
+	@Column
+	private double other;
+	@Column
+	private String otherInfo;
 
 	public Record() {
 	}
@@ -80,10 +84,27 @@ public class Record extends PersistentBean {
 		this.freight = freight;
 	}
 
+	public double getOther() {
+		return other;
+	}
+
+	public void setOther(double other) {
+		this.other = other;
+	}
+
+	public String getOtherInfo() {
+		return otherInfo;
+	}
+
+	public void setOtherInfo(String otherInfo) {
+		this.otherInfo = otherInfo;
+	}
+
 	@Override
 	public String toString() {
 		return "Record [time=" + time + ", goods=" + goods + ", partner=" + partner + ", count=" + count
-				+ ", univalent=" + univalent + ", inOrOut=" + inOrOut + ", freight=" + freight + "]";
+				+ ", univalent=" + univalent + ", inOrOut=" + inOrOut + ", freight=" + freight + ", other=" + other
+				+ ", otherInfo=" + otherInfo + "]";
 	}
 
 }

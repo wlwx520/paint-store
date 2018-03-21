@@ -64,6 +64,8 @@ public class RecordService implements IService {
 		String inOrOut = data.get("inOrOut");
 		String goods = data.get("goods");
 		String partner = data.get("partner");
+		String other = data.get("other");
+		String otherInfo = data.get("otherInfo");
 
 		if (inOrOut == null || !(inOrOut.equals("进货") || inOrOut.equals("出货"))) {
 			return ResultBuilder.buildResult(0x4004);
@@ -72,16 +74,20 @@ public class RecordService implements IService {
 		Double univalentValue = Double.valueOf(univalent);
 		Double freightValue = Double.valueOf(freight);
 		Double countValue = Double.valueOf(count);
+		Double otherValue = Double.valueOf(other);
 		try {
 			Date parseTime = DATAFORMAT.parse(time);
-			recordManager.create(parseTime.getTime(), countValue, univalentValue, freightValue, inOrOut, goods,
-					partner);
+			recordManager.create(parseTime.getTime(), countValue, univalentValue, freightValue, inOrOut, goods, partner,
+					otherValue, otherInfo);
 		} catch (Exception e) {
 			return ResultBuilder.buildResult(0x4001);
 		}
 
 		if (freightValue > 0) {
 			freightValue = -freightValue;
+		}
+		if (otherValue > 0) {
+			otherValue = -otherValue;
 		}
 		double x = univalentValue * countValue;
 		if (inOrOut.equals("出货") && x < 0) {
@@ -91,7 +97,7 @@ public class RecordService implements IService {
 			x = -x;
 		}
 
-		balanceManager.update(goods, partner, x + freightValue);
+		balanceManager.update(goods, partner, x + freightValue + otherValue);
 		return ResultBuilder.buildResult(0);
 	}
 
@@ -150,6 +156,7 @@ public class RecordService implements IService {
 			JSONArray arr = new JSONArray();
 			double freightSum = 0;
 			double coastSum = 0;
+			double otherSum = 0;
 
 			if (result != null) {
 				result.stream().sorted((a, b) -> {
@@ -167,6 +174,11 @@ public class RecordService implements IService {
 						y = -y;
 					}
 					freightSum += y;
+					double z = r.getOther();
+					if (z > 0) {
+						z = -z;
+					}
+					otherSum += z;
 					double x = r.getUnivalent() * r.getCount();
 					if (r.getInOrOut().equals("出货") && x < 0) {
 						x = -x;
@@ -181,6 +193,7 @@ public class RecordService implements IService {
 			rep.put("records", arr);
 			rep.put("freightSum", freightSum);
 			rep.put("coastSum", coastSum);
+			rep.put("otherSum", otherSum);
 
 			long total = recordManager.size(
 					CheckUtil.checkStrIsEmpty(startTime) ? null : DATAFORMAT.parse(startTime).getTime(),
@@ -309,7 +322,7 @@ public class RecordService implements IService {
 				name.append("-交易记录");
 				String filePath = xlsx.toFile(name.toString());
 
-				return ResultBuilder.buildResult(0, filePath,name.toString());
+				return ResultBuilder.buildResult(0, filePath, name.toString());
 			}
 
 		} catch (NumberFormatException | ParseException e) {
