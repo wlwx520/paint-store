@@ -16,5 +16,18 @@
 				<include>*build.jar</include>
 			</includes>
 		</fileSet>
+		<fileSet>
+			<fileMode>0755</fileMode>
+			<directory>${project.basedir}</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>web/**</include>
+				<include>log</include>
+				<include>upload</include>
+				<include>context.xml</include>
+				<include>log4j.properties</include>
+				<include>LocalDB</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 </assembly>
