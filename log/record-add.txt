@@ -1,3 +1,8 @@
 2018-21-21 14:21:26 : {univalent=12, partner=A, inOrOut=进货, freight=12, count=12, goods=B, time=2018-03-21 14:21:17}
 2018-40-21 14:40:50 : {univalent=12, otherInfo=123123, other=12, partner=A, inOrOut=进货, freight=12, count=12, goods=B, time=2018-03-09 14:40:26}
 2018-51-21 14:51:01 : {univalent=12, otherInfo=ddd, other=12, partner=A, inOrOut=进货, freight=12, count=12, goods=B, time=2018-03-21 14:50:49}
+2018-03-22 10:03:23 : {univalent=1, otherInfo=12, other=1, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 10:03:15}
+2018-13-22 10:13:17 : {univalent=1, otherInfo=1, other=1, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 10:13:10}
+2018-13-22 10:13:55 : {univalent=2, otherInfo=我, other=2, partner=A, inOrOut=进货, freight=2, count=2, goods=B, time=2018-06-22 10:13:45}
+2018-25-22 10:25:14 : {univalent=1, otherInfo=2, other=1, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 10:25:06}
+2018-25-22 10:25:56 : {univalent=1, otherInfo=2, other=2, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 10:25:51}

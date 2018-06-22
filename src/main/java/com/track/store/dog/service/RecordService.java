@@ -67,7 +67,7 @@ public class RecordService implements IService {
 		String other = data.get("other");
 		String otherInfo = data.get("otherInfo");
 
-		if (inOrOut == null || !(inOrOut.equals("进货") || inOrOut.equals("出货"))) {
+		if (inOrOut == null || !(inOrOut.equals("进货") || !inOrOut.equals("出货"))) {
 			return ResultBuilder.buildResult(0x4004);
 		}
 
