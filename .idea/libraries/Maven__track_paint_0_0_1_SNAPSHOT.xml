@@ -8,6 +8,8 @@
     </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/track/paint/0.0.1-SNAPSHOT/paint-0.0.1-SNAPSHOT-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/track/paint/0.0.1-SNAPSHOT/paint-0.0.1-SNAPSHOT.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/track/paint/0.0.1-SNAPSHOT/paint-0.0.1-SNAPSHOT-build.jar!/" />
     </SOURCES>
   </library>
 </component>

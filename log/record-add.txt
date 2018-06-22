@@ -6,3 +6,15 @@
 2018-13-22 10:13:55 : {univalent=2, otherInfo=我, other=2, partner=A, inOrOut=进货, freight=2, count=2, goods=B, time=2018-06-22 10:13:45}
 2018-25-22 10:25:14 : {univalent=1, otherInfo=2, other=1, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 10:25:06}
 2018-25-22 10:25:56 : {univalent=1, otherInfo=2, other=2, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 10:25:51}
+2018-38-22 10:38:38 : {univalent=1, otherInfo=1, other=1, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 10:38:29}
+2018-41-22 10:41:31 : {univalent=1, otherInfo=21, other=1, partner=A, inOrOut=出货, freight=1, count=1, goods=B, time=2018-06-22 10:41:29}
+2018-47-22 10:47:57 : {univalent=1, otherInfo=1, other=4, partner=A, inOrOut=进货, freight=3, count=2, goods=B, time=2018-06-22 10:47:49}
+2018-48-22 10:48:22 : {univalent=2, otherInfo=2, other=2, partner=A, inOrOut=进货, freight=2, count=2, goods=B, time=2018-06-22 10:48:09}
+2018-59-22 10:59:46 : {univalent=1, otherInfo=2, other=1, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 10:59:37}
+2018-00-22 11:00:11 : {univalent=1, otherInfo=23, other=2, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 11:00:03}
+2018-44-22 13:44:16 : {univalent=1, otherInfo=12, other=1, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 13:44:01}
+2018-44-22 13:44:52 : {univalent=1, otherInfo=12, other=12, partner=A, inOrOut=出货, freight=1, count=1, goods=B, time=2018-06-22 13:44:44}
+2018-45-22 13:45:32 : {univalent=1, otherInfo=1, other=1, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 13:45:24}
+2018-45-22 13:45:52 : {univalent=2, otherInfo=2, other=2, partner=A, inOrOut=出货, freight=2, count=2, goods=B, time=2018-06-22 13:45:40}
+2018-47-22 13:47:08 : {univalent=1, otherInfo=12, other=1, partner=A, inOrOut=进货, freight=1, count=1, goods=B, time=2018-06-22 13:46:59}
+2018-47-22 13:47:22 : {univalent=2, otherInfo=2, other=2, partner=A, inOrOut=出货, freight=2, count=2, goods=B, time=2018-06-22 13:47:13}
